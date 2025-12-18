@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="th">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Happy Birthday! Akane</title>
+
+    <!-- favicon -->
+    <link rel="icon" type="image/png" href="images/17985542.png">
+
+    <!-- font -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Borel&family=Homemade+Apple&family=Patrick+Hand&display=swap"
+        rel="stylesheet">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <div class="phone-wrapper">
+
+        <audio id="intro-song" src="audio/intro.mp3" loop></audio>
+
+        <section id="scene-cover" class="scene active">
+            <div class="d-flex flex-column justify-content-between align-items-center h-100">
+
+                <div class="video-container">
+                </div>
+                <div class="Hbd-title mt-5 text-center">
+                    <h2>Happy Birthday</h2>
+                    <div class="name-set">
+                        <h1>Akane
+                            <i class="bi bi-brush-fill"></i>
+                        </h1>
+                    </div>
+                </div>
+
+                <div class="swipe-area text-center mb-5">
+                    <div class="swipe-arrow">
+                        <i class="bi bi-chevron-double-up"></i>
+                    </div>
+                    <p class="swipe-up mt-2">Swipe up</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="scene-cake" class="scene">
+
+            <div id="youtube-player-container" class="hidden-youtube"></div>
+
+            <div class="content-box text-center">
+
+                <div class="cake-container my-5">
+                    <div class="cake">
+                        <div class="candle">
+                            <div class="flame" id="flame"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <p class="instruction">Make a wish! <br>Then blow into the mic<br>or tap the candle.</p>
+            </div>
+
+            <div class="scene-cake-decoration1">
+                <img src="images/1.png" alt="">
+            </div>
+
+            <div class="scene-cake-decoration2">
+                <img src="images/4.png" alt="">
+            </div>
+
+            <div class="minnion-video auto-pan-container">
+                <video src="videos/Minnion-singAsong.mp4" id="my-local-video" class="bg-video" loop muted playsinline>
+                </video>
+            </div>
+        </section>
+
+        <section id="scene-gift" class="scene">
+            <div class="bg-decoration" style="left: 10%; animation-duration: 8s; animation-delay: 0s;">✨</div>
+            <div class="bg-decoration" style="left: 30%; animation-duration: 12s; animation-delay: 2s;">❤️</div>
+            <div class="bg-decoration" style="left: 70%; animation-duration: 10s; animation-delay: 4s;">🎁</div>
+            <div class="bg-decoration" style="left: 90%; animation-duration: 15s; animation-delay: 1s;">✨</div>
+            <div class="bg-decoration" style="left: 50%; animation-duration: 9s; animation-delay: 3s;">⭐</div>
+
+            <div class="d-flex flex-column justify-content-center align-items-center h-100">
+
+                <div class="gift-container" id="gift-box-trigger">
+
+                    <div class="gift-message" id="gift-message">
+                        Take a look! What's inside<br>
+                        <small>Special gift from everyone</small>
+                    </div>
+
+                    <div class="gift-lid">
+                        <div class="ribbon-horizontal"></div>
+                        <div class="ribbon-vertical"></div>
+                    </div>
+
+                    <div class="gift-body">
+                        <div class="ribbon-vertical"></div>
+                    </div>
+
+                </div>
+
+                <p class="text-white mt-4 fade-in-text instruction">Tap to unbox</p>
+            </div>
+        </section>
+
+        <section id="scene-book" class="scene">
+
+            <div class="book-controls">
+                <button class="btn-control" id="btn-reset" title="กลับหน้าแรก">
+                    <i class="bi bi-house-fill"></i>
+                </button>
+
+                <div class="autoplay-wrapper">
+                    <input type="checkbox" id="chk-autoplay" class="autoplay-checkbox">
+                    <label for="chk-autoplay" class="autoplay-label">
+                        <i class="bi bi-play-fill"></i> Auto
+                    </label>
+                </div>
+
+                <button class="btn-control" id="btn-grid" title="ดูหน้าทั้งหมด">
+                    <i class="bi bi-grid-3x3-gap-fill"></i>
+                </button>
+            </div>
+
+            <div class="book-opening">
+
+            </div>
+
+            <div class="book-container">
+
+                <button id="btn-prev-page" class="nav-arrow prev-arrow">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M15 18l-6-6 6-6" />
+                    </svg>
+                </button>
+
+                <div class="book-page active-page" data-page="2">
+                    <img src="images/Beam-1.png" alt="" class="wish-image">
+                    <div class="wish-sender">
+                        <span class="sender-tape"></span>
+                        By : Beam
+                    </div>
+                    <button class="btn-download" onclick="downloadImage(this)">
+                        <i class="bi bi-download"></i>
+                    </button>
+                </div>
+                <div class="book-page" data-page="3">
+                    <img src="images/Bright-2.png" alt="" class="wish-image">
+                    <div class="wish-sender">
+                        <span class="sender-tape"></span>
+                        By : Bright
+                    </div>
+                    <button class="btn-download" onclick="downloadImage(this)">
+                        <i class="bi bi-download"></i>
+                    </button>
+                </div>
+                <div class="book-page" data-page="4">
+                    <img src="images/Fu-3.png" alt="" class="wish-image">
+                    <div class="wish-sender">
+                        <span class="sender-tape"></span>
+                        By : Fu
+                    </div>
+                    <button class="btn-download" onclick="downloadImage(this)">
+                        <i class="bi bi-download"></i>
+                    </button>
+                </div>
+                <div class="book-page" data-page="5">
+                    <img src="images/Mean-4.png" alt="" class="wish-image">
+                    <div class="wish-sender">
+                        <span class="sender-tape"></span>
+                        By : Mean
+                    </div>
+                    <button class="btn-download" onclick="downloadImage(this)">
+                        <i class="bi bi-download"></i>
+                    </button>
+                </div>
+                <div class="book-page" data-page="5">
+                    <img src="images/Fon-5.png" alt="" class="wish-image">
+                    <div class="wish-sender">
+                        <span class="sender-tape"></span>
+                        By : Fon
+                    </div>
+                    <button class="btn-download" onclick="downloadImage(this)">
+                        <i class="bi bi-download"></i>
+                    </button>
+                </div>
+                <div class="book-page" data-page="5">
+                    <img src="images/Itim-6.png" alt="" class="wish-image">
+                    <div class="wish-sender">
+                        <span class="sender-tape"></span>
+                        By : Itim
+                    </div>
+                    <button class="btn-download" onclick="downloadImage(this)">
+                        <i class="bi bi-download"></i>
+                    </button>
+                </div>
+                <div class="book-page" data-page="5">
+                    <img src="images/Room3433-7.png" alt="" class="wish-image">
+                    <div class="wish-sender">
+                        <span class="sender-tape"></span>
+                        By : Room 3433
+                    </div>
+                    <button class="btn-download" onclick="downloadImage(this)">
+                        <i class="bi bi-download"></i>
+                    </button>
+                </div>
+                <div class="book-page" data-page="5">
+                    <img src="images/Chokun-8.png" alt="" class="wish-image">
+                    <div class="wish-sender">
+                        <span class="sender-tape"></span>
+                        By : Chokun
+                    </div>
+                    <button class="btn-download" onclick="downloadImage(this)">
+                        <i class="bi bi-download"></i>
+                    </button>
+                </div>
+                <div class="book-page" data-page="5">
+                    <img src="images/Tonkaew-9.png" alt="" class="wish-image">
+                    <div class="wish-sender">
+                        <span class="sender-tape"></span>
+                        By : Tonkaew
+                    </div>
+                    <button class="btn-download" onclick="downloadImage(this)">
+                        <i class="bi bi-download"></i>
+                    </button>
+                </div>
+                <div class="book-page" data-page="5">
+                    <img src="images/Dao-10.png" alt="" class="wish-image">
+                    <div class="wish-sender">
+                        <span class="sender-tape"></span>
+                        By : Dao
+                    </div>
+                    <button class="btn-download" onclick="downloadImage(this)">
+                        <i class="bi bi-download"></i>
+                    </button>
+                </div>
+                <div class="book-page" data-page="5">
+                    <img src="images/Won-11.png" alt="" class="wish-image">
+                    <div class="wish-sender">
+                        <span class="sender-tape"></span>
+                        By : Won
+                    </div>
+                    <button class="btn-download" onclick="downloadImage(this)">
+                        <i class="bi bi-download"></i>
+                    </button>
+                </div>
+                <div class="book-page" data-page="5">
+                    <img src="images/KingKaew-12.png" alt="" class="wish-image">
+                    <div class="wish-sender">
+                        <span class="sender-tape"></span>
+                        By : KingKaew
+                    </div>
+                    <button class="btn-download" onclick="downloadImage(this)">
+                        <i class="bi bi-download"></i>
+                    </button>
+                </div>
+                <div class="book-page" data-page="5">
+                    <img src="images/Poking-13.png" alt="" class="wish-image">
+                    <div class="wish-sender">
+                        <span class="sender-tape"></span>
+                        By : Poking
+                    </div>
+                    <button class="btn-download" onclick="downloadImage(this)">
+                        <i class="bi bi-download"></i>
+                    </button>
+                </div>
+                <div class="book-page" data-page="5">
+                    <img src="images/Men-14.png" alt="" class="wish-image">
+                    <div class="wish-sender">
+                        <span class="sender-tape"></span>
+                        By : Men
+                    </div>
+                    <button class="btn-download" onclick="downloadImage(this)">
+                        <i class="bi bi-download"></i>
+                    </button>
+                </div>
+                <div class="book-page" data-page="5">
+                    <img src="images/Mew-15.png" alt="" class="wish-image">
+                    <div class="wish-sender">
+                        <span class="sender-tape"></span>
+                        By : Mew
+                    </div>
+                    <button class="btn-download" onclick="downloadImage(this)">
+                        <i class="bi bi-download"></i>
+                    </button>
+                </div>
+                <div class="book-page" data-page="5">
+                    <img src="images/Pine-16.png" alt="" class="wish-image">
+                    <div class="wish-sender">
+                        <span class="sender-tape"></span>
+                        By : Pine
+                    </div>
+                    <button class="btn-download" onclick="downloadImage(this)">
+                        <i class="bi bi-download"></i>
+                    </button>
+                </div>
+                <div class="book-page" data-page="5">
+                    <img src="images/Boy-17.png" alt="" class="wish-image">
+                    <div class="wish-sender">
+                        <span class="sender-tape"></span>
+                        By : Boy
+                    </div>
+                    <button class="btn-download" onclick="downloadImage(this)">
+                        <i class="bi bi-download"></i>
+                    </button>
+                </div>
+                <div class="book-page" data-page="5">
+                    <img src="images/Kaiwhan-18.png" alt="" class="wish-image">
+                    <div class="wish-sender">
+                        <span class="sender-tape"></span>
+                        By : Kaiwhan
+                    </div>
+                    <button class="btn-download" onclick="downloadImage(this)">
+                        <i class="bi bi-download"></i>
+                    </button>
+                </div>
+
+                <button id="btn-next-page" class="nav-arrow next-arrow">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"
+                        stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M9 18l6-6-6-6" />
+                    </svg>
+                </button>
+
+                <button id="btn-go-credit" class="btn-go-credit" style="display: none;">
+                    See more
+                </button>
+            </div>
+
+            <div id="page-counter" class="page-counter">
+                1 / 20
+            </div>
+
+            <div id="grid-overlay" class="grid-overlay">
+                <div class="d-flex justify-content-end p-5">
+                    <button id="btn-close-grid" class="btn-close btn-close-white"></button>
+                </div>
+                <div class="grid-content" id="grid-content">
+                </div>
+            </div>
+        </section>
+
+        <div id="scene-credit" class="scene">
+            <div class="credit-content">
+                <h1>✨ Special Thanks ✨</h1>
+                <p>Project Created & Website Development By</p>
+                <h2>Kaiwhan (SweetEgg)</h2>
+
+                <p>Memory Page Content By</p>
+                <h2>Akane's friends</h2>
+
+                <img class="akane-qr" src="images/Akane-qr.png" alt="">
+                <h3>See messages from all of us</h2>
+                    <div class="credit-buttons">
+                        <button id="btn-credit-back" class="btn-secondary">
+                            ↩ Back to Book
+                        </button>
+
+                        <button id="btn-credit-home" class="btn-primary">
+                            Home / Restart
+                        </button>
+                    </div>
+            </div>
+        </div>
+
+        <audio id="gift-enter-sound" src="videos/Happy Birthday Lo-Fi  3-HOUR Cozy Chill Mix.mp3" loop></audio>
+        <audio id="gift-sound" src="videos/Tada_ sound effect.mp3"></audio>
+        <audio id="book-bgm"
+            src="videos/Relaxing music without ads Ghibli Studio Ghibli Concert BGM for work _ healing _ study.mp3"
+            loop></audio>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <script src="script.js"></script>
+</body>
+
+</html>

@@ -1,0 +1,1243 @@
+/* Reset & Base Styles */
+body {
+    background-color: var(--secondary-black);
+    /* สีพื้นหลังนอกจอมือถือ */
+    margin: 0;
+    padding: 0;
+    font-family: "Patrick Hand", cursive;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    overflow: hidden;
+}
+
+:root {
+    --primary-red: #d3000b;
+    --primary-blue: #0008a7;
+    --secondary-yellow: #FFDC16;
+    --secondary-cream: #FFF8D0;
+    --secondary-black: #000000;
+    --secondary-white: #ffffff;
+    --secondary-darkRed: #980000;
+}
+
+/* กรอบมือถือจำลอง */
+.phone-wrapper {
+    width: 100%;
+    max-width: 390px;
+    height: 844px;
+    /* Fix ความสูงตามที่ขอ */
+    background-color: #000;
+    /* สีพื้นหลังของแอป */
+    position: relative;
+    overflow: hidden;
+    /* ซ่อนส่วนที่เกินขอบ */
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+}
+
+/*--- SCENE MANAGEMENT ---*/
+/* ทุกหน้า (Scene) จะซ้อนกันอยู่ */
+.scene {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    visibility: hidden;
+    /* ปรับ Transition ให้รองรับการเลื่อน (Transform) ด้วย */
+    transition: transform 0.8s cubic-bezier(0.25, 1, 0.5, 1), opacity 0.8s;
+    background-color: #f8f9fa;
+    /* สีพื้นฐานแต่ละหน้า */
+}
+
+/* Class สำหรับแสดงหน้าปัจจุบัน */
+.scene.active {
+    opacity: 1;
+    visibility: visible;
+    z-index: 10;
+    transform: translateY(0);
+    /* อยู่ตรงกลางจอปกติ */
+}
+
+/*--- CUSTOMIZE SECTIONS ---*/
+
+/* Scene 1: Cover */
+#scene-cover {
+    background: linear-gradient(180deg, #0008a7 0%, #c60000 100%);
+}
+
+/* กล่องแม่ (Container) */
+.video-container {
+    position: relative;
+    width: 100%;
+    height: 100%; /* หรือกำหนดความสูงที่ต้องการ เช่น 100vh */
+    background-color: #000; /* พื้นหลังสีดำ กันเห็นขอบ */
+    overflow: hidden; /* ซ่อนส่วนที่ล้นออกไป */
+    
+    /* จัดกึ่งกลาง */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* ตัววิดีโอ YouTube */
+.video-container iframe {
+    height: 100%;            /* 1. สูงเท่า Container ตามโจทย์ */
+    aspect-ratio: 16 / 9;    /* 2. บังคับสัดส่วน 16:9 (วิดีโอมาตรฐาน) */
+    width: auto;             /* 3. ปล่อยความกว้างให้ยืดออกไปเอง */
+    position: absolute;
+    z-index: 0;
+    display: flex;
+    /* กรณีจอแคบกว่าวิดีโอ (เช่นมือถือ) วิดีโอจะล้นออกข้างซ้าย-ขวา 
+       แต่จุดกึ่งกลางจะยังอยู่ที่เดิม (Center Crop) */
+}
+
+#scene-cover .Hbd-title {
+    display: flex;
+    flex-direction: column;
+    gap: 70px;
+    position: absolute;
+    z-index: 100;
+}
+
+#scene-cover .Hbd-title h2 {
+    color: var(--secondary-darkRed);
+    font-weight: 600;
+    letter-spacing: 2px;
+    font-family: "Borel", cursive;
+    font-size: 30px;
+    margin-left: 0px;
+    animation: fade-in-out infinite 1s ease-in;
+    position: absolute;
+    display: flex;
+}
+
+@keyframes fade-in-out {
+    0% {
+        opacity: 0%;
+    }
+    50% {
+        opacity: 50%;
+    }
+    100% {
+        opacity: 100%;
+    }
+}
+
+#scene-cover .Hbd-title .name-set {
+    margin-left: -60px;
+    margin-top: -40px;
+}
+
+#scene-cover .Hbd-title h1 {
+    color: var(--secondary-cream);
+    font-size: 70px;
+    font-family: "Homemade Apple", cursive;
+    position: relative;
+    display: inline-block;
+    animation: jelly 1s infinite;
+    margin-top: 120px;
+}
+
+@keyframes jelly {
+    0%, 100% { transform: scale(1, 1); }
+    25% { transform: scale(0.9, 1.1); }
+    50% { transform: scale(1.1, 0.9); }
+    75% { transform: scale(0.95, 1.05); }
+}
+
+#scene-cover .Hbd-title i {
+    display: inline-block;
+    /* สำคัญ! ต้องมีบรรทัดนี้ animation ถึงจะทำงานกับตัวอักษร */
+    animation: wiggle 0.8s infinite ease-out;
+    /* ส่ายวนไปเรื่อยๆ */
+    position: absolute;
+    bottom: 22px;
+}
+
+@keyframes wiggle {
+    0% {
+        transform: rotate(0deg);
+    }
+
+    25% {
+        transform: rotate(-5deg);
+    }
+
+    50% {
+        transform: rotate(0deg);
+    }
+
+    75% {
+        transform: rotate(5deg);
+    }
+
+    100% {
+        transform: rotate(0deg);
+    }
+}
+
+#scene-cover .swipe-area {
+    position: absolute;
+    display: flex;
+    z-index: 10;
+    bottom: 0;
+    flex-direction: column;
+}
+
+#scene-cover .swipe-area .swipe-arrow .bi-chevron-double-up {
+    font-size: 20px;
+    font-weight: 400;
+    color: var(--secondary-cream);
+    animation: wiggle-UpDown 1s infinite ease-in-out;
+    display: block;
+}
+
+#scene-cover .swipe-area p {
+    font-size: 30px;
+    color: var(--secondary-cream);
+    font-weight: 100;
+    opacity: 70%;
+    display: inline-block;
+    animation: float 1s infinite ease-in-out;
+}
+
+@keyframes wiggle-UpDown {
+    0% {
+        transform: translateY(-2px);
+    }
+
+    50% {
+        transform: translateY(0px);
+        opacity: 0;
+    }
+
+    100% {
+        transform: translateY(2px);
+    }
+}
+
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); } /* ลอยขึ้น 10px */
+}
+
+/* พื้นหลัง: ใช้ Radial Gradient ทำเหมือนมีสปอตไลท์ส่องลงมากลางห้อง */
+#scene-cake {
+    background: linear-gradient(180deg,#ffef40,#001342);
+    color: white;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    overflow: hidden;
+}
+
+#scene-cake  .hidden-youtube {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    overflow: hidden;
+    z-index: -999;
+    pointer-events: none;
+}
+
+#scene-cake .scene-cake-decoration1 {
+    z-index: 20;
+    position: absolute;
+    top: -5px;
+    left: 4px;
+    animation: swing-effect 3s ease-in-out infinite;
+    transform-origin: top center;
+}
+
+@keyframes swing-effect {
+    0% { transform: rotate(0deg); }
+    20% { transform: rotate(5deg); }  /* เอียงขวา */
+    40% { transform: rotate(-5deg); } /* เอียงซ้าย */
+    60% { transform: rotate(3deg); }  /* เอียงขวาเบาๆ */
+    80% { transform: rotate(-3deg); } /* เอียงซ้ายเบาๆ */
+    100% { transform: rotate(0deg); } /* กลับมาตรง */
+}
+
+#scene-cake .scene-cake-decoration1 img {
+    width: 120px;
+    height: auto;
+}
+
+#scene-cake .scene-cake-decoration2 {
+    z-index: 20;
+    position: absolute;
+    bottom: 450px;
+    right: -2px;
+}
+
+#scene-cake .scene-cake-decoration2 img {
+    width: 170px;
+    height: auto;
+}
+
+/* ข้อความ "Make a Wish" */
+#scene-cake h2 {
+    font-family: 'Brush Script MT', cursive;
+    /* ฟอนต์ลายมือ (ถ้ามี) */
+    font-size: 3rem;
+    color: #ffebd2;
+    text-shadow: 0 0 10px rgba(255, 165, 0, 0.5);
+    margin-bottom: 20px;
+    opacity: 0;
+    transform: translateY(-20px);
+    transition: all 1s ease;
+}
+
+/* เมื่อหน้าเค้ก Active ให้ข้อความลอยลงมา */
+#scene-cake.active h2 {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* --- 🍰 CAKE CONTAINER (พื้นที่วางเค้ก) --- */
+.cake-container {
+    position: relative;
+    width: 250px;
+    height: 250px;
+    margin: 30px auto;
+    cursor: pointer;
+    /* ให้รู้ว่ากดได้ (กรณีเป่าไม่ได้) */
+
+    /* Animation: เค้กลอยขึ้นมาตอนเปิดหน้า */
+    opacity: 0;
+    transform: scale(0.5);
+    transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    /* เด้งดึ๋ง */
+}
+
+#scene-cake.active .cake-container {
+    opacity: 1;
+    transform: scale(1);
+    transition-delay: 0.3s;
+}
+
+/* --- ตัวเค้ก (CSS Art) --- */
+.cake {
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 200px;
+    height: 120px;
+    background-color: #fce4ec;
+    /* สีเนื้อเค้ก (ชมพูอ่อน) */
+    border-radius: 10px 10px 0 0;
+    box-shadow:
+        inset -10px 0 10px rgba(0, 0, 0, 0.05),
+        /* เงาด้านใน */
+        0 4px 10px rgba(0, 0, 0, 0.2);
+    /* เงาตกกระทบพื้น */
+}
+
+/* ชั้นครีม (Icing) */
+.cake::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 40px;
+    background-color: #ff80ab;
+    /* สีครีม (ชมพูเข้ม) */
+    border-radius: 10px 10px 20px 20px;
+    background-image: linear-gradient(to bottom, #ff80ab 60%, transparent 100%);
+    z-index: 2;
+}
+
+/* จานรองเค้ก */
+.cake::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: -10%;
+    width: 120%;
+    height: 15px;
+    background-color: #eee;
+    border-radius: 50%;
+    z-index: -1;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* --- 🕯️ CANDLE (เทียน) --- */
+.candle {
+    position: absolute;
+    top: -50px;
+    /* ยืดขึ้นไปจากตัวเค้ก */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 15px;
+    height: 60px;
+    background: repeating-linear-gradient(45deg,
+            #fff,
+            #fff 5px,
+            #b30a0a 5px,
+            /* สีลายเทียน (ฟ้าสลับขาว) */
+            #b30a0a 10px);
+    border-radius: 3px;
+    z-index: 100;
+}
+
+/* ไส้เทียน */
+.candle::before {
+    content: '';
+    position: absolute;
+    top: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 2px;
+    height: 10px;
+    background-color: #333;
+}
+
+/* --- 🔥 FLAME (ไฟ) --- */
+.flame {
+    position: absolute;
+    top: -25px;
+    /* ลอยอยู่เหนือเทียน */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 20px;
+    height: 30px;
+    background: radial-gradient(ellipse at bottom, #ffff00 0%, #ff6b6b 100%);
+    /* ไล่สีเหลือง->แดง */
+    border-radius: 50% 50% 50% 50% / 60% 60% 40% 40%;
+    /* ทรงหยดน้ำ */
+    box-shadow: 0 0 20px #ff6b6b;
+    /* แสงฟุ้งกระจาย */
+
+    /* Animation ไฟวิบวับ */
+    animation: flicker 1s infinite alternate;
+    transform-origin: center bottom;
+    transition: all 0.5s ease;
+}
+
+/* แสงรอบๆ เปลวไฟ (Glow) */
+.flame::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 60px;
+    height: 60px;
+    background: rgba(255, 200, 0, 0.2);
+    border-radius: 50%;
+    z-index: -1;
+    animation: glow 1.5s infinite alternate;
+}
+
+/* Keyframes: ไฟสั่นไหว */
+@keyframes flicker {
+    0% {
+        transform: translateX(-50%) scale(1) rotate(-2deg);
+        opacity: 1;
+    }
+
+    25% {
+        transform: translateX(-50%) scale(1.1) rotate(2deg);
+        opacity: 0.9;
+    }
+
+    50% {
+        transform: translateX(-50%) scale(0.9) rotate(-1deg);
+        opacity: 1;
+    }
+
+    75% {
+        transform: translateX(-50%) scale(1.05) rotate(1deg);
+        opacity: 0.95;
+    }
+
+    100% {
+        transform: translateX(-50%) scale(1) rotate(0deg);
+        opacity: 1;
+    }
+}
+
+@keyframes glow {
+    from {
+        opacity: 0.3;
+        transform: translate(-50%, -50%) scale(0.8);
+    }
+
+    to {
+        opacity: 0.6;
+        transform: translate(-50%, -50%) scale(1.2);
+    }
+}
+
+/* --- 💨 STATE: FLAME OUT (ไฟดับ) --- */
+.flame.out {
+    opacity: 0;
+    transform: translateX(-50%) scale(0.1);
+    /* หดเล็กลงจนหายไป */
+    animation: none;
+    /* หยุดสั่น */
+}
+
+.flame.out::after {
+    display: none;
+    /* ซ่อนแสง Glow */
+}
+
+/* Effect ควันลอยขึ้นตอนดับ (Smoke) */
+.flame.out::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    width: 10px;
+    height: 40px;
+    background: linear-gradient(to top, rgba(200, 200, 200, 0.8), transparent);
+    filter: blur(4px);
+    transform: translateX(-50%);
+    animation: smokeRise 1.5s ease-out forwards;
+}
+
+@keyframes smokeRise {
+    0% {
+        opacity: 0;
+        height: 10px;
+        transform: translateX(-50%) translateY(0);
+    }
+
+    50% {
+        opacity: 0.6;
+        height: 50px;
+        transform: translateX(-60%) translateY(-20px);
+    }
+
+    100% {
+        opacity: 0;
+        height: 80px;
+        transform: translateX(-40%) translateY(-50px);
+    }
+}
+
+/* คำแนะนำ (Instruction) */
+.instruction {
+    font-size: 30px;
+    color: rgba(255, 255, 255, 0.6);
+    margin-top: 10px;
+    opacity: 0;
+    animation: fadeInBlink 2s infinite;
+    animation-delay: 2s;
+    /* รอแป๊บนึงค่อยขึ้นมา */
+}
+
+@keyframes fadeInBlink {
+
+    0%,
+    100% {
+        opacity: 0.4;
+    }
+
+    50% {
+        opacity: 0.8;
+    }
+}
+
+@keyframes smokeRise {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, 0);
+    }
+
+    50% {
+        opacity: 0.8;
+        transform: translate(-50%, -20px);
+    }
+
+    100% {
+        opacity: 0;
+        transform: translate(-50%, -40px);
+    }
+}
+
+/* --- GIFT SCENE STYLES --- */
+#scene-gift {
+    background: radial-gradient(circle, #fff56b 0%, #c0392b 100%);
+    overflow: hidden;
+}
+
+/* คอนเทนเนอร์หลักของกล่อง */
+.gift-container {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    cursor: pointer;
+    /* Animation 1: Emerge (ค่อยๆ โผล่ขึ้นมาตอนเข้า Scene) */
+    opacity: 0;
+    transform: translateY(100px) scale(0.8);
+    transition: all 1s cubic-bezier(0.34, 1.56, 0.64, 1), transform 0.3s ease;
+    animation: float-box 3s ease-in-out infinite;
+    /* เด้งนิดๆ */
+}
+
+.gift-container::after {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 150px; /* ขนาดแสง */
+    height: 150px;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0) 70%);
+    transform: translate(-50%, -50%);
+    z-index: -1; /* ไปอยู่หลังกล่อง */
+    border-radius: 50%;
+    
+    /* Animation: แสงวูบวาบ */
+    animation: pulse-glow 2s infinite alternate;
+}
+
+/* คีย์เฟรม: การลอย */
+@keyframes float-box {
+    0%, 100% { transform: translateY(0) rotate(0deg); }
+    50% { transform: translateY(-20px) rotate(2deg); } /* ลอยขึ้น + เอียงนิดๆ */
+}
+
+/* คีย์เฟรม: แสงวูบวาบ */
+@keyframes pulse-glow {
+    0% { opacity: 0.5; transform: translate(-50%, -50%) scale(0.8); }
+    100% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); }
+}
+
+/* 3. ตกแต่ง Background (ของลอย) */
+.bg-decoration {
+    position: absolute;
+    bottom: -50px;
+    color: rgba(255, 255, 255, 0.522); /* สีจางๆ */
+    font-size: 3rem;
+    animation: float-up 10s linear infinite;
+    z-index: 1; /* อยู่หลังสุด */
+}
+
+@keyframes float-up {
+    0% { transform: translateY(0) rotate(0deg); opacity: 0; }
+    20% { opacity: 1; }
+    80% { opacity: 1; }
+    100% { transform: translateY(-100vh) rotate(360deg); opacity: 0; }
+}
+
+/* เมื่อ Scene นี้ active ให้กล่องโผล่ขึ้นมา */
+#scene-gift.active .gift-container {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    transition-delay: 0.3s;
+    /* รอแป๊บนึงค่อยโผล่ */
+}
+
+/* คำสั่ง Tap to unbox ให้กระพริบ */
+.instruction {
+    margin-top: 20px;
+    font-size: 2rem;
+    color: white;
+    animation: blink 1.5s infinite;
+}
+
+@keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+/* สไตล์กล่องข้อความ */
+.gift-message {
+    position: absolute;
+    bottom: 100%;
+    /* ให้ลอยอยู่เหนือกล่อง */
+    left: 50%;
+    transform: translateX(-50%) scale(0);
+    /* เริ่มต้น: ซ่อนด้วยการย่อเหลือ 0 */
+    transform-origin: bottom center;
+
+    background-color: #fff;
+    color: #333;
+    padding: 15px 25px;
+    border-radius: 20px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    font-weight: bold;
+    font-size: 18px;
+    white-space: nowrap;
+    /* ไม่ให้ข้อความตกบรรทัด */
+    z-index: 20;
+    /* อยู่บนสุด */
+
+    opacity: 0;
+    transition: all 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    /* เด้งดึ๋ง */
+}
+
+/* สร้างหางลูกศรชี้ลง (Triangle) */
+.gift-message::after {
+    content: '';
+    position: absolute;
+    bottom: -10px;
+    left: 50%;
+    transform: translateX(-50%);
+    border-width: 10px 10px 0;
+    border-style: solid;
+    border-color: #fff transparent transparent transparent;
+}
+
+/* Class สำหรับแสดงข้อความ */
+.gift-message.show {
+    transform: translateX(-50%) translateY(-20px) scale(1);
+    /* ลอยขึ้นนิดนึง + ขยายเต็ม */
+    opacity: 1;
+}
+
+.gift-message small {
+    font-size: 14px;
+    font-weight: normal;
+    color: #666;
+}
+
+/* ชิ้นส่วนกล่อง */
+.gift-lid {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 200px;
+    height: 50px;
+    background-color: #a41717;
+    /* สีฝากล่อง */
+    z-index: 10;
+    /* อยู่บนสุด */
+    border-radius: 5px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    transition: all 0.6s ease-in-out;
+    transform-origin: top center;
+}
+
+.gift-body {
+    position: absolute;
+    bottom: 0;
+    left: 5px;
+    /* ขยับให้เล็กกว่าฝานิดนึง */
+    width: 190px;
+    height: 160px;
+    background-color: #a30000;
+    /* สีตัวกล่อง */
+    z-index: 5;
+    border-radius: 0 0 5px 5px;
+    box-shadow: inset 0 -10px 20px rgba(0, 0, 0, 0.1);
+}
+
+/* ริบบิ้นตกแต่ง */
+.ribbon-vertical {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 30px;
+    height: 100%;
+    background-color: #f8f9fa;
+}
+
+.ribbon-horizontal {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 100%;
+    height: 30px;
+    background-color: #f8f9fa;
+}
+
+/* --- STATES: เมื่อกล่องถูกเปิด (.open) --- */
+
+/* Animation 2: ฝากล่องเปิด */
+.gift-container.open .gift-lid {
+    transform: translateY(-120px) rotate(-10deg);
+    /* ลอยขึ้นและเอียง */
+    opacity: 0;
+    /* จางหายไป */
+}
+
+/* Animation 3: ปกสมุด Popup */
+.popup-cover {
+    position: absolute;
+    bottom: 20px;
+    left: 50%;
+    width: 180px;
+    /* ขนาดปก */
+    transform: translateX(-50%) scale(0);
+    /* เริ่มต้นซ่อนโดยการย่อเหลือ 0 */
+    z-index: 2;
+    /* อยู่ซ้อนในกล่อง */
+    transition: all 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    /* เด้งดึ๋ง */
+    opacity: 0;
+}
+
+/* เมื่อเปิดกล่อง ให้ปกเด้งขึ้นมา */
+.gift-container.open .popup-cover {
+    transform: translateX(-50%) translateY(-80px) scale(1);
+    /* ลอยขึ้นและขยายเต็ม */
+    opacity: 1;
+    transition-delay: 0.3s;
+    /* รอฝาเปิดก่อนค่อยเด้ง */
+    z-index: 15;
+    /* เด้งมาอยู่หน้าสุด */
+}
+
+/* ข้อความ instruction */
+.fade-in-text {
+    opacity: 0;
+    transition: opacity 1s 1s;
+    /* มาช้าสุด */
+}
+
+#scene-gift.active .fade-in-text {
+    opacity: 0.8;
+}
+
+/* Scene 3: Book */
+#scene-book {
+    background-color: #fdfbf7;
+    /* สีปกรณัม/กระดาษ */
+    position: relative;
+}
+
+/* ปุ่มควบคุมด้านบน */
+.book-controls {
+    position: absolute;
+    top: 20px;
+    left: 0;
+    width: 100%;
+    padding: 0 20px;
+    display: flex;
+    justify-content: space-between;
+    z-index: 100;
+    pointer-events: none;
+    /* เพื่อให้พื้นที่ว่างๆ ไม่บังการกดหนังสือ */
+}
+
+/* จัดกล่องให้สวยงาม */
+.autoplay-wrapper {
+    position: absolute;
+    display: flex;
+    pointer-events: auto; /* ให้กดได้ */
+    right: 80px;
+}
+
+/* ซ่อนตัว Checkbox จริงๆ ไว้ (เราจะกดผ่าน Label แทน) */
+.autoplay-checkbox {
+    display: none;
+}
+
+/* ปรับหน้าตาปุ่ม (Label) */
+.autoplay-label {
+    background: rgba(255, 255, 255, 0.81);
+    color: #333;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+/* ไอคอน Play */
+.autoplay-label i {
+    font-size: 1.2rem;
+}
+
+/* ✨ สถานะตอนกด (Checked): เปลี่ยนเป็นสีเขียว/แดงตามธีม */
+.autoplay-checkbox:checked + .autoplay-label {
+    background: #f0e6d2e4; /* สีธีม */
+    color: var(--secondary-black);
+    padding-right: 20px; /* ขยายออกหน่อย */
+}
+
+/* เปลี่ยนไอคอน Play เป็น Pause เมื่อกด */
+.autoplay-checkbox:checked + .autoplay-label i::before {
+    content: "\F4C4"; /* รหัส icon pause-fill ของ Bootstrap */
+}
+
+.btn-control {
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    border: none;
+    background: rgba(255, 255, 255, 0.8);
+    /* สีขาวโปร่งแสง */
+    color: #333;
+    font-size: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    pointer-events: auto;
+    /* เปิดให้กดปุ่มได้ */
+    cursor: pointer;
+    transition: transform 0.2s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-control:active {
+    transform: scale(0.9);
+}
+
+.book-container {
+    padding: 0;
+    height: 100%;
+    position: relative;
+    /* สร้างมิติความลึก */
+    overflow: hidden;
+    /* กันหน้ากระดาษทะลุจอ */
+}
+
+.book-page {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #fff;
+    border-radius: 5px 15px 15px 5px;
+    /* มนขอบขวาให้เหมือนกระดาษ */
+    box-shadow: inset 20px 0 30px rgba(0, 0, 0, 0.05), 5px 5px 15px rgba(0, 0, 0, 0.1);
+    /* เงาสันหนังสือ */
+
+    /* ✨ หัวใจสำคัญของ Slide Effect */
+    transition: transform 0.4s ease-in-out, opacity 0.4s;
+    transform: translateX(100%); /* เริ่มต้น: ผลักไปรอทางขวา */
+    opacity: 0; /* ซ่อนไว้ก่อน */
+    z-index: 0;
+    
+    /* จัด Layout ข้างในเหมือนเดิม */
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+}
+
+.book-page .wish-image {
+    display: flex;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 390px;
+    height: 844px;
+}
+
+/* สถานะ: หน้าปัจจุบัน (โชว์ตรงกลาง) */
+.book-page.active-slide {
+    transform: translateX(0);
+    opacity: 1;
+    z-index: 2;
+}
+
+/* สถานะ: หน้าที่แล้ว (ผลักไปทางซ้าย) */
+.book-page.prev-slide {
+    transform: translateX(-100%);
+    opacity: 0;
+    z-index: 1;
+}
+
+/* ปุ่มลูกศร Navigation */
+.nav-arrow {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255, 255, 255, 0.8);
+    color: #5f5f5f; /* สีเดียวกับธีม */
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    font-size: 20px;
+    cursor: pointer;
+    z-index: 10;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    transition: transform 0.2s, background 0.2s;
+    
+    /* จัดกึ่งกลางไอคอน */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.nav-arrow:active {
+    transform: translateY(-50%) scale(0.9);
+}
+
+.prev-arrow { left: 20px; }
+.next-arrow { right: 20px; }
+
+/* ซ่อนปุ่มถ้ากดไม่ได้ (Optional) */
+.nav-arrow:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+/* กล่องชื่อผู้เขียน */
+.wish-sender {
+    position: absolute;
+    bottom: 25px;
+    /* ปรับตำแหน่งขึ้นลงตรงนี้ (ค่ายิ่งเยอะยิ่งลอยสูง) */
+    left: 8%;
+    /* ปรับตำแหน่งซ้ายขวาตรงนี้ */
+    z-index: 20;
+    /* ให้อยู่เหนือรูปภาพหลัก */
+
+    /* สไตล์กระดาษ */
+    background-color: #f0e6d2;
+    /* สีครีมเหมือนกระดาษเก่า */
+    padding: 5px 15px 5px 25px;
+    /* เว้นที่ด้านซ้ายเยอะหน่อยเผื่อเทป */
+    border-radius: 2px;
+    box-shadow: 2px 3px 5px rgba(0, 0, 0, 0.2);
+    /* เงาเล็กน้อย */
+
+    /* สไตล์ตัวอักษร (หาฟอนต์ลายมือสวยๆ มาใส่จะดีมาก) */
+    font-family: "Patrick Hand", cursive;
+    /* หรือฟอนต์ลายมือที่คุณใช้ */
+    font-weight: bold;
+    color: #8b4513;
+    /* สีน้ำตาลเข้ม */
+    font-size: 16px;
+    transform: rotate(0deg);
+    /* เอียงนิดๆ ให้ดูธรรมชาติ */
+}
+
+/* สร้างเทปใสปลอมๆ ด้วย CSS pseudo-element */
+.wish-sender::before {
+    content: '';
+    position: absolute;
+    top: -5px;
+    left: 5px;
+    width: 25px;
+    height: 40px;
+    background-color: rgba(255, 255, 255, 0.4);
+    /* สีขาวโปร่งแสง */
+    border-left: 1px solid rgba(255, 255, 255, 0.6);
+    border-right: 1px solid rgba(255, 255, 255, 0.6);
+    transform: rotate(-15deg);
+    /* เอียงเทปให้ขวางกับป้าย */
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+.btn-download {
+    position: absolute;
+    bottom: 75px;
+    /* มุมขวาบน (หรือปรับตำแหน่งตามใจชอบ) */
+    left: 30px;
+    z-index: 50;
+    /* ให้อยู่บนสุด */
+
+    width: 45px;
+    height: 45px;
+    border-radius: 50%;
+    border: none;
+    background-color: #fdfbf7;
+    /* สีขาวจางๆ */
+    color: black;
+    font-size: 22px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s;
+}
+
+.btn-download:hover {
+    background-color: #fff;
+    color: #000;
+    transform: scale(1.1);
+    /* ขยายใหญ่ขึ้นนิดนึงตอนเอาเมาส์ชี้ */
+}
+
+.btn-download:active {
+    transform: scale(0.95);
+}
+
+/* สถานะ "เปิดไปแล้ว" (ถูกพลิกไปทางซ้าย) */
+.book-page.flipped {
+    transform: rotateY(-180deg);
+    /* พลิกกลับหลังไปทางซ้าย */
+}
+
+.page-counter {
+    position: absolute;
+    bottom: 28px;
+    right: 20px;
+    z-index: 100 !important;
+    /* ให้ลอยอยู่เหนือหน้าหนังสือ */
+
+    background-color: rgba(0, 0, 0, 0.291);
+    /* พื้นหลังสีดำจางๆ */
+    color: rgb(255, 255, 255) !important;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: bold;
+
+    /* สำคัญมาก: เพื่อให้แตะทะลุได้ ไม่ขวางการปัดหน้าจอ */
+    pointer-events: none;
+
+    /* Animation เล็กน้อยตอนเปลี่ยนหน้า */
+    transition: opacity 0.3s;
+}
+
+/* ปุ่มกดไปหน้า Credit (จะโผล่มากลางหน้าสุดท้าย) */
+.btn-go-credit {
+    position: absolute;
+    bottom: 22px; /* อยู่ด้านล่างของหนังสือ */
+    right: 85px;
+    
+    padding: 4px 12px;
+    background: #8b4513;
+    color: white;
+    border: none;
+    border-radius: 30px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+    z-index: 20;
+    letter-spacing: 1px;
+    
+    /* Animation ดุ๊กดิ๊กเรียกร้องความสนใจ */
+    animation: bounce 2s infinite;
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {transform: translateX(-50%) translateY(0);}
+    40% {transform: translateX(-50%) translateY(-10px);}
+    60% {transform: translateX(-50%) translateY(-5px);}
+}
+
+/* จัดหน้า Scene Credit */
+#scene-credit {
+    background: rgba(0, 0, 0, 0.9); /* พื้นหลังสีดำโปร่งแสง */
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: left;
+    
+    /* ซ่อนไว้ก่อน (ใช้ class .active เพื่อแสดง เหมือน scene อื่นๆ) */
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s;
+    position: fixed;
+    top: 0; left: 0; width: 100%; height: 100%;
+    z-index: 9999;
+    padding-left: 0px;
+}
+
+#scene-credit.active {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+.credit-content h1 { 
+    margin-bottom: 30px; color: var(--secondary-yellow); 
+    margin-bottom: 50px;
+}
+.credit-content p { 
+    margin-top: 20px; color: #ccc;
+    margin-bottom: 20px; 
+    font-size: 20px;
+}
+.credit-content h2 {
+    margin-bottom: 70px;
+    font-size: 30px;
+}
+
+.credit-content .akane-qr {
+    height: 150px;
+    width: auto;
+    position: relative;
+    margin-bottom: 20px;
+    transform: translateX(50%);
+
+}
+
+.credit-buttons { margin-top: 40px; display: flex; gap: 40px; justify-content: center; }
+
+/* ปุ่มในหน้า Credit */
+.btn-primary, .btn-secondary {
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+}
+.btn-primary { background: #ff6b6b; color: white; }
+.btn-secondary { background: white; color: #333; }
+
+/* Grid Overlay (หน้ารวม) */
+.grid-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.9);
+    /* พื้นหลังดำทึบ */
+    z-index: 200;
+    /* อยู่บนสุด */
+    transform: translateY(100%);
+    /* ซ่อนไว้ข้างล่าง */
+    transition: transform 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.grid-overlay.show {
+    transform: translateY(0);
+    /* เลื่อนขึ้นมาโชว์ */
+}
+
+/* เนื้อหาข้างใน Grid */
+.grid-content {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    /* แบ่งเป็น 3 คอลัมน์ */
+    gap: 20px;
+    padding: 0 20px 40px 20px;
+    overflow-y: auto;
+    max-height: 80%;
+}
+
+/* ปุ่มตัวเลือกหน้า */
+.grid-item {
+    background: #ffffff;
+    color: white;
+    aspect-ratio: 1/1;
+    /* สี่เหลี่ยมจัตุรัส */
+    border-radius: 10px;
+    border: none;
+    font-size: 16px;
+    font-weight: none;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+
+    padding: 5px;
+    /* เพิ่ม padding กันข้อความชิดขอบ */
+    overflow: hidden;
+    /* กันข้อความล้นปุ่ม */
+}
+
+.grid-item.active {
+    background: #ff9a9e;
+    /* สีไฮไลท์หน้าที่เปิดอยู่ */
+    color: #fff;
+}

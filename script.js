@@ -27,7 +27,7 @@ function onYouTubeIframeAPIReady() {
         height: '100%', width: '100%',
         videoId: coverSongID,
         playerVars: {
-            'playsinline': 1, 'controls': 0, 'disablekb': 1, 
+            'playsinline': 1, 'controls': 1, 'disablekb': 1, 
             'loop': 1, 'playlist': coverSongID
         },
         events: {

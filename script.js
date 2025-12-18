@@ -1,74 +1,96 @@
 // ==========================================
-// 🎵 YOUTUBE PLAYER (เพลงเดียว วนลูป)
+// 🎵 YOUTUBE SYSTEM (แยกหน้าเปิด vs หน้าเค้ก)
 // ==========================================
-const mainSong = {
-    id: 'qVVZf_T5ghY', // ⚠️ ใส่รหัสเพลงหลักที่ต้องการตรงนี้
-    start: 6,          // เริ่มวินาทีที่...
-    end: 46           // จบวินาทีที่... (แล้ววนกลับไป start)
-};
 
-let player;
-let isPlayerReady = false;
-let timeUpdater = null;
+// ID เพลงของแต่ละหน้า
+const coverSongID = 'vx5vpG6jEXI'; // เพลง HBD หน้าเปิด
+const cakeSongID = 'qVVZf_T5ghY';  // เพลงเป่าเค้ก หน้าถัดไป
 
-// โหลด YouTube API
+let coverPlayer; // ตัวเล่นหน้าเปิด
+let cakePlayer;  // ตัวเล่นหน้าเค้ก
+let isCakeReady = false;
+let loopTimer = null;
+
+// โหลด API (เหมือนเดิม)
 var tag = document.createElement('script');
 tag.src = "https://www.youtube.com/iframe_api";
 var firstScriptTag = document.getElementsByTagName('script')[0];
 firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
 
-// สร้าง Player
+// ฟังก์ชันเริ่มทำงานเมื่อ API พร้อม
 function onYouTubeIframeAPIReady() {
-    player = new YT.Player('youtube-player-container', {
-        height: '1', width: '1',
-        videoId: mainSong.id,
+    
+    // ------------------------------------------------
+    // 1️⃣ สร้างตัวเล่นสำหรับ "หน้าเปิด" (Cover)
+    // ------------------------------------------------
+    coverPlayer = new YT.Player('cover-video', {
+        height: '100%', width: '100%',
+        videoId: coverSongID,
         playerVars: {
-            'playsinline': 1, 'controls': 0, 'disablekb': 1, 'fs': 0, 'rel': 0,
-            'start': mainSong.start,
-            'autoplay': 0 // ยังไม่เล่น รอคำสั่ง
+            'playsinline': 1, 'controls': 0, 'disablekb': 1, 
+            'loop': 1, 'playlist': coverSongID // วนลูป
         },
         events: {
             'onReady': (e) => {
-                isPlayerReady = true;
-                e.target.setVolume(100);
+                // พยายามเล่นแบบเงียบไปก่อน (เพื่อให้ภาพมา)
+                e.target.mute();
+                e.target.playVideo();
+            }
+        }
+    });
+
+    // ------------------------------------------------
+    // 2️⃣ สร้างตัวเล่นสำหรับ "หน้าเค้ก" (Cake) รอไว้ก่อน
+    // ------------------------------------------------
+    cakePlayer = new YT.Player('youtube-player-container', {
+        height: '1', width: '1',
+        videoId: cakeSongID,
+        playerVars: { 
+            'playsinline': 1, 'controls': 0, 'start': 6, 'autoplay': 0
+        },
+        events: {
+            'onReady': (e) => { 
+                isCakeReady = true; 
+                e.target.setVolume(100); 
             },
-            'onStateChange': onPlayerStateChange
         }
     });
 }
 
-// ระบบวนลูป (Loop)
-function onPlayerStateChange(event) {
-    if (event.data === YT.PlayerState.PLAYING) {
-        startLoopCheck();
-    } else {
-        stopLoopCheck();
-    }
+// ระบบวนลูป (เฉพาะหน้าเค้ก)
+function startCakeLoop() {
+    stopCakeLoop();
+    loopTimer = setInterval(() => {
+        if (!cakePlayer || !cakePlayer.getCurrentTime) return;
+        if (cakePlayer.getCurrentTime() >= 46) cakePlayer.seekTo(6);
+    }, 500);
 }
+function stopCakeLoop() { clearInterval(loopTimer); }
 
-// เช็คเวลาเพื่อวนลูป (Loop Checker)
-function startLoopCheck() {
-    stopLoopCheck();
-    timeUpdater = setInterval(() => {
-        if (!player || !player.getCurrentTime) return;
 
-        let currentTime = player.getCurrentTime();
+// ==========================================
+// 👇 ส่วนสำคัญ: แตะหน้าจอ เพื่อเปิดเสียง "หน้าเปิด"
+// ==========================================
+document.addEventListener('DOMContentLoaded', () => {
 
-        // ถ้าเล่นถึงจุดจบ (End) -> ดีดกลับไปจุดเริ่ม (Start)
-        if (currentTime >= mainSong.end) {
-            player.seekTo(mainSong.start);
-            player.pauseVideo(); // ⏹️ สั่งหยุดเพลง
-            stopTimeCheck();     // เลิกจับเวลา
+    function unlockCoverAudio() {
+        // สั่งให้ตัวเล่น "หน้าเปิด" ดังขึ้น
+        if (coverPlayer && typeof coverPlayer.unMute === 'function') {
+            coverPlayer.unMute();       // เปิดเสียง
+            coverPlayer.setVolume(100); // เร่งสุด
+            coverPlayer.playVideo();    // เล่น
+            console.log("Cover Music Started!");
         }
-    }, 0); // เช็คทุก 0.2 วินาที
-}
-
-function stopLoopCheck() {
-    if (timeUpdater) {
-        clearInterval(timeUpdater);
-        timeUpdater = null;
+        
+        // ลบ Event ทิ้ง (ทำแค่ครั้งเดียวพอ)
+        document.body.removeEventListener('click', unlockCoverAudio);
+        document.body.removeEventListener('touchstart', unlockCoverAudio);
     }
-}
+
+    // รอรับการแตะที่หน้าเปิด
+    document.body.addEventListener('click', unlockCoverAudio);
+    document.body.addEventListener('touchstart', unlockCoverAudio);
+});
 
 // ========================================================
 // 🟢 GLOBAL FUNCTIONS (ฟังก์ชันที่เรียกจาก HTML โดยตรง)
@@ -184,52 +206,69 @@ document.addEventListener('DOMContentLoaded', () => {
     }, { once: true });
 
     function startSurprise() {
-        // 1. หยุดของเดิม
-        const coverVideo = document.getElementById('cover-video');
-        if (coverVideo) coverVideo.src = "";
-        if (introSong) introSong.pause();
+        console.log("🚀 Starting Surprise...");
 
-        // 🎵 2. สั่งเล่นเพลง YouTube (เล่นรอบเดียว)
-        if (isPlayerReady && player) {
-            player.playVideo();
+        // ============================================
+        // 🛑 1. สั่งหยุดหน้า Cover (แบบเด็ดขาด!)
+        // ============================================
+
+        // 1.1 ลองสั่งหยุดด้วย API ดีๆ ก่อน
+        if (typeof coverPlayer !== 'undefined' && coverPlayer && typeof coverPlayer.pauseVideo === 'function') {
+            coverPlayer.pauseVideo();
         }
 
-        // -------------------------------------------
-        // 🎥 3. วิดีโอพื้นหลัง (ค้างเฟรมสุดท้าย)
-        // -------------------------------------------
-        const localVideo = document.getElementById('my-local-video');
+        // 1.2 ⚠️ ไม้ตาย: ซ่อนกล่องวิดีโอทิ้งไปเลย (เพื่อให้เสียงดับชัวร์ๆ)
+        const coverContainer = document.getElementById('cover-video'); 
+        // หรือถ้าใน HTML มี class video-container หุ้มอยู่ ให้ซ่อนตัวแม่มันด้วย
+        const videoWrapper = document.querySelector('#scene-cover .video-container');
+        
+        if (coverContainer) {
+            coverContainer.style.display = 'none'; // ซ่อนทันที
+        }
+        if (videoWrapper) {
+            videoWrapper.style.display = 'none'; // ซ่อนกล่องที่หุ้มอยู่ด้วย
+        }
 
-        // 👇 ตั้งค่าช่วงเวลา
+        // 1.3 หยุดเสียง intro เดิม (ถ้ามี)
+        if (typeof introSong !== 'undefined' && introSong) introSong.pause();
+
+        // ============================================
+        // ▶️ 2. สั่งเล่นเพลงหน้าเค้ก (Cake Player)
+        // ============================================
+        if (typeof cakePlayer !== 'undefined' && cakePlayer && typeof cakePlayer.playVideo === 'function') {
+            cakePlayer.playVideo();
+        }
+
+        // ============================================
+        // 🎥 3. วิดีโอพื้นหลัง Minion (ส่วนนี้ของเดิม ดีอยู่แล้วครับ)
+        // ============================================
+        const localVideo = document.getElementById('my-local-video');
         const vidStart = 0;
-        const vidEnd = 42;   // พอถึงวิที่ 25 จะหยุดค้าง
+        const vidEnd = 42; 
 
         if (localVideo) {
             localVideo.muted = true;
-            localVideo.loop = false; // ⛔ บังคับปิด Loop ของระบบ
+            localVideo.loop = false;
             localVideo.currentTime = vidStart;
 
-            // ตรวจสอบเวลาเพื่อสั่งหยุด (Freeze)
             localVideo.ontimeupdate = function () {
                 if (localVideo.currentTime >= vidEnd) {
-                    localVideo.pause(); // ⏹️ หยุดวิดีโอ (ภาพจะค้างอยู่ท่านั้น)
-                    // localVideo.currentTime = vidEnd; // (เผื่ออยากล็อกเวลาให้นิ่งสนิทจริงๆ)
-
-                    // ยกเลิกการจับเวลา (เพื่อไม่ให้กินเครื่อง)
+                    localVideo.pause();
                     localVideo.ontimeupdate = null;
                 }
             };
 
-            // สั่งเล่นแบบดีเลย์ 3 วิ
             setTimeout(() => {
                 localVideo.play().catch(e => console.log("Video Error:", e));
             }, 0);
         }
 
+        // เปลี่ยนฉาก
         switchScene(sceneCover, sceneCake);
         startMicrophone();
     }
     // ==========================================
-    // 2️⃣ CAKE & CANDLE (เป่าเทียน)
+    // 2️⃣ CAKE & CANDLE (เป่าเทียน - แก้ไขแล้ว)
     // ==========================================
     const flame = document.getElementById('flame');
     const candleContainer = document.querySelector('.cake-container');
@@ -238,36 +277,47 @@ document.addEventListener('DOMContentLoaded', () => {
     function blowOutCandle() {
         if (isCandleOut) return;
         isCandleOut = true;
+        
+        // 1. ทำให้เทียนดับ
         if (flame) flame.classList.add('out');
+        console.log("🔥 Candle blown out!");
 
         // ===========================================
-        // 🛑 STOP EVERYTHING (สั่งหยุดทุกอย่างทันที)
+        // 🛑 STOP EVERYTHING (สั่งหยุดเพลงและวิดีโอ)
         // ===========================================
 
-        // 1. สั่งหยุดเพลง YouTube (ถ้ามี)
-        if (player && typeof player.pauseVideo === 'function') {
-            player.pauseVideo();
+        // 🟢 แก้จุดที่ 1: เปลี่ยนจาก player เป็น cakePlayer
+        if (typeof cakePlayer !== 'undefined' && cakePlayer && typeof cakePlayer.pauseVideo === 'function') {
+            cakePlayer.pauseVideo();
         }
 
-        // 2. สั่งหยุด Local Video Background (ถ้ามี)
+        // 2. สั่งหยุด Local Video Background (Minion)
         const localVideo = document.getElementById('my-local-video');
         if (localVideo) {
             localVideo.pause();
-        }
-
-        // 3. (แถม) หยุดตัวจับเวลาวิดีโอ เพื่อไม่ให้มันพยายามเล่นต่อ
-        if (localVideo && localVideo.ontimeupdate) {
-            localVideo.ontimeupdate = null;
+            localVideo.ontimeupdate = null; // เลิกจับเวลา
         }
 
         // ===========================================
 
-        // เป่าดับแล้ว รอ 2 วิ -> ไปหน้าของขวัญ
+        // 3. เป่าดับแล้ว รอ 1.5 วินาที -> ไปหน้าของขวัญ
         setTimeout(() => {
-            switchScene(sceneCake, sceneGift);
+            console.log("🎁 Going to Gift Scene...");
+            
+            // เรียกฟังก์ชันเปลี่ยนหน้า (switchScene)
+            // เช็คความชัวร์ว่าตัวแปร sceneCake/sceneGift มีค่าไหม
+            if (sceneCake && sceneGift) {
+                switchScene(sceneCake, sceneGift);
+            } else {
+                // ถ้าหาตัวแปรไม่เจอ ให้สั่งผ่าน ID โดยตรง (กันเหนียว)
+                document.getElementById('scene-cake').classList.remove('active');
+                document.getElementById('scene-gift').classList.add('active');
+            }
+
+            // เล่นเสียง Effect เข้าหน้าของขวัญ
             const enterSound = document.getElementById('gift-enter-sound');
             if (enterSound) {
-                enterSound.volume = 0.6; // ปรับความดังตามชอบ
+                enterSound.volume = 0.6; 
                 enterSound.currentTime = 0;
                 enterSound.play().catch(e => console.log("Audio Error:", e));
             }
@@ -292,7 +342,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 for (let i = 0; i < dataArray.length; i++) sum += dataArray[i];
                 let average = sum / dataArray.length;
 
-                if (average > 90) { // ปรับความไวตรงนี้
+                if (average > 30) { // ปรับความไวตรงนี้
                     blowOutCandle();
                 }
                 requestAnimationFrame(detectBlow);

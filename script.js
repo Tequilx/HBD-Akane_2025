@@ -28,11 +28,10 @@ function onYouTubeIframeAPIReady() {
         videoId: coverSongID,
         playerVars: {
             'playsinline': 1, 'controls': 0, 'disablekb': 1, 
-            'loop': 1, 'playlist': coverSongID // วนลูป
+            'loop': 1, 'playlist': coverSongID
         },
         events: {
             'onReady': (e) => {
-                // พยายามเล่นแบบเงียบไปก่อน (เพื่อให้ภาพมา)
                 e.target.mute();
                 e.target.playVideo();
             }
@@ -40,33 +39,55 @@ function onYouTubeIframeAPIReady() {
     });
 
     // ------------------------------------------------
-    // 2️⃣ สร้างตัวเล่นสำหรับ "หน้าเค้ก" (Cake) รอไว้ก่อน
+    // 2️⃣ สร้างตัวเล่นสำหรับ "หน้าเค้ก" (Cake)
     // ------------------------------------------------
     cakePlayer = new YT.Player('youtube-player-container', {
         height: '1', width: '1',
         videoId: cakeSongID,
         playerVars: { 
-            'playsinline': 1, 'controls': 0, 'start': 6, 'autoplay': 0
+            'playsinline': 1, 'controls': 0, 
+            'start': 6,    // เริ่มวินาทีที่ 7
+            'autoplay': 0
         },
         events: {
             'onReady': (e) => { 
                 isCakeReady = true; 
                 e.target.setVolume(100); 
             },
+            // ✅ แก้จุดที่ 1: ใส่ onStateChange ไว้ในนี้ (และเปลี่ยนชื่อฟังก์ชันเรียก)
+            'onStateChange': (e) => {
+                if (e.data === YT.PlayerState.PLAYING) startCakeStopTimer();
+                else stopCakeTimer();
+            }
         }
     });
 }
 
-// ระบบวนลูป (เฉพาะหน้าเค้ก)
-function startCakeLoop() {
-    stopCakeLoop();
+// ------------------------------------------------
+// ⏱️ ระบบสั่งหยุดเมื่อถึงเวลา (ไม่ใช่ Loop)
+// ------------------------------------------------
+
+// ✅ แก้จุดที่ 2: เปลี่ยนชื่อและไส้ในฟังก์ชัน
+function startCakeStopTimer() {
+    stopCakeTimer(); // เคลียร์ของเก่าก่อน
     loopTimer = setInterval(() => {
         if (!cakePlayer || !cakePlayer.getCurrentTime) return;
-        if (cakePlayer.getCurrentTime() >= 46) cakePlayer.seekTo(6);
-    }, 500);
-}
-function stopCakeLoop() { clearInterval(loopTimer); }
 
+        // 👇 ถ้าเล่นถึงวินาทีที่ 46 ให้ "หยุด" (Pause)
+        if (cakePlayer.getCurrentTime() >= 46) {
+            cakePlayer.pauseVideo(); // สั่งหยุด
+            stopCakeTimer();         // เลิกจับเวลา
+            console.log("Cake song finished.");
+        }
+    }, 200); // เช็คถี่ๆ ทุก 0.2 วิ เพื่อความแม่น
+}
+
+function stopCakeTimer() { 
+    if (loopTimer) {
+        clearInterval(loopTimer);
+        loopTimer = null;
+    }
+}
 
 // ==========================================
 // 👇 ส่วนสำคัญ: แตะหน้าจอ เพื่อเปิดเสียง "หน้าเปิด"
